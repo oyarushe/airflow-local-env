@@ -1,0 +1,84 @@
+version: "3.7"
+
+services:
+
+  airflow-webserver: &airflow_base_service
+    image: airflow:latest
+    build:
+      dockerfile: docker/airflow.Dockerfile
+      context: ..
+      args:
+        AIRFLOW_BASE_IMAGE: apache/airflow:1.10.12-python3.7
+    container_name: airflow-webserver
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./plugins:/opt/airflow/plugins
+      - ./tests:/opt/airflow/tests
+      - ./variables.json:/opt/airflow/variables.json
+      - airflow-logs:/opt/airflow/logs
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./env_vars/.env_airflow_conf
+    ports:
+      - 8080:8080
+    command: ["webserver"]
+
+  airflow-scheduler:
+    <<: *airflow_base_service
+    container_name: airflow-scheduler
+    ports: []
+    command: ["scheduler"]
+
+  airflow-worker:
+    <<: *airflow_base_service
+    container_name: airflow-worker
+    ports: []
+    command: ["worker"]
+
+  airflow-celery-flower:
+    <<: *airflow_base_service
+    container_name: airflow-celery-flower
+    ports:
+      - 5555:5555
+    command: ["flower"]
+
+  airflow-bash:
+    <<: *airflow_base_service
+    ports: []
+    container_name: airflow-bash
+
+  airflow-pycharm:
+    <<: *airflow_base_service
+    container_name: ''
+    ports: []
+    entrypoint: []
+    command: []
+
+  airflow-init-db:
+    <<: *airflow_base_service
+    container_name: airflow-init-db
+    ports: []
+    command: ["initdb"]
+
+  postgres:
+    image: postgres:12.2
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+
+networks:
+  default:
+    name: airflow
+
+volumes:
+  airflow-logs:
