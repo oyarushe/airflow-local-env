@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
 
 
 with DAG(
@@ -17,7 +18,12 @@ with DAG(
     }
 ) as dag:
 
-    PythonOperator(
+    start_task = DummyOperator(task_id="start")
+    end_task = DummyOperator(task_id="end")
+
+    monitor_task = PythonOperator(
         task_id="monitor",
         python_callable=lambda: logging.info("Monitor Task")
     )
+
+    start_task >> monitor_task >> end_task

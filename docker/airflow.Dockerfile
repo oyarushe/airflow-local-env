@@ -1,11 +1,8 @@
-ARG AIRFLOW_BASE_IMAGE="apache/airflow:1.10.12-python3.7"
+ARG AIRFLOW_BASE_IMAGE="apache/airflow:2.1.2-python3.6"
 FROM ${AIRFLOW_BASE_IMAGE}
 
 COPY --chown=airflow:airflow ./etl/requirements.txt ${AIRFLOW_HOME}
 RUN pip install --user -r ${AIRFLOW_HOME}/requirements.txt
-
-#COPY --chown=airflow:airflow ./etl/airflow-utils ${AIRFLOW_HOME}/airflow-utils
-#RUN pip install --user --editable ${AIRFLOW_HOME}/airflow-utils/.
 
 COPY --chown=airflow:airflow ./etl/dags /opt/airflow/dags
 COPY --chown=airflow:airflow ./etl/plugins /opt/airflow/plugins

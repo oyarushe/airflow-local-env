@@ -109,7 +109,7 @@ fi
 # Run the command
 case "$1" in
   webserver)
-    airflow initdb
+    airflow db init
 
     if [[ -d /entrypoint.d/ ]]; then
       echo "Running entrypoint scripts ..."
@@ -122,20 +122,22 @@ case "$1" in
     fi
     exec airflow webserver
     ;;
-  worker|scheduler)
+  scheduler|flower)
     # To give the webserver time to run initdb.
     sleep 10
     exec airflow "$@"
     ;;
-  flower)
+  worker)
+    # To give the webserver time to run initdb.
     sleep 10
-    exec airflow "$@"
+    exec airflow celery "$@"
     ;;
   version)
     exec airflow "$@"
     ;;
   *)
     # The command is something like bash, not an airflow subcommand. Just run it in the right environment.
+    sleep 10
     exec "$@"
     ;;
 esac

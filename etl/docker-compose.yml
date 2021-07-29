@@ -8,7 +8,7 @@ services:
       dockerfile: docker/airflow.Dockerfile
       context: ..
       args:
-        AIRFLOW_BASE_IMAGE: apache/airflow:1.10.12-python3.7
+        AIRFLOW_BASE_IMAGE: apache/airflow:2.1.2-python3.6
     container_name: airflow-webserver
     volumes:
       - ./dags:/opt/airflow/dags
@@ -60,7 +60,7 @@ services:
     <<: *airflow_base_service
     container_name: airflow-init-db
     ports: []
-    command: ["initdb"]
+    command: ["db init"]
 
   postgres:
     image: postgres:12.2

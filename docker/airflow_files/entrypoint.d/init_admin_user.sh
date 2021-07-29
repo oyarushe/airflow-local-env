@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-airflow create_user \
+airflow users create \
   -r Admin \
   -u ${AIRFLOW_ADMIN_USERNAME:-admin} \
   -p ${AIRFLOW_ADMIN_PASSWORD:-admin} \

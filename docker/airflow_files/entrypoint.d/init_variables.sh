@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-airflow variables -i /opt/airflow/variables.json
+airflow variables import /opt/airflow/variables.json
